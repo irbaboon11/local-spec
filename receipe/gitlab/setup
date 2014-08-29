@@ -1,0 +1,64 @@
+#!/bin/bash
+
+# XCODE DEVELOPMENT KIT 설치 확인
+CHECK_XCODE_TOOL="pkgutil --pkg-info=com.apple.pkg.CLTools_Executables | grep \"No receipt for\""
+if [ -z "$CHECK_XCODE_TOOL" ]; then
+	echo "먼저 Mac Xcode Development Kit을 설치해주세요."
+	echo " - xcode-select --install"
+	xcode-select --install
+	exit
+fi
+
+# brew 설치 확인
+CHECK_BREW="brew -v | grep \"command not found\""
+if [ ! -z "$CHECK_BREW" ]; then
+	echo "먼저 brew를 설치합니다."
+	echo " - ruby -e \"$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)\""
+fi
+
+# brew 정상 설치 확인
+CHECK_BREW_INSTALL="brew -v | grep \"Homebrew\""
+if [ -z "$CHECK_BREW_INSTALL" ]; then
+	echo "brew가 설치되지 않았습니다. 다시 시도해주세요."
+	exit
+fi
+
+# brew Doctor 실행
+brew doctor 
+
+echo "gitlab 설치 준비"
+echo "redis git logrotate redis 설치"
+brew install icu4c git logrotate redis libxml2 cmake
+
+echo "자동실행 설정"
+ln -sfv /usr/local/opt/logrotate/*.plist ~/Library/LaunchAgents
+launchctl load ~/Library/LaunchAgents/homebrew.mxcl.logrotate.plist
+ln -sfv /usr/local/opt/redis/*.plist ~/Library/LaunchAgents
+launchctl load ~/Library/LaunchAgents/homebrew.mxcl.redis.plist 
+
+echo "Python link"
+sudo ln -s /usr/bin/python /usr/bin/python2
+sudo easy_install pip
+sudo pip install pygments
+
+echo "docutils 설치"
+curl -O http://heanet.dl.sourceforge.net/project/docutils/docutils/0.11/docutils-0.11.tar.gz
+gunzip -c docutils-0.11.tar.gz | tar xopf -
+cd docutils-0.11
+sudo python setup.py install
+cd ..
+sudo rm -rf docutils-0.11*
+
+echo "mysql 설치"
+brew install mysql
+ln -sfv /usr/local/opt/mysql/*.plist ~/Library/LaunchAgents
+launchctl load ~/Library/LaunchAgents/homebrew.mxcl.mysql.plist
+
+$(brew --prefix mysql)/bin/mysqladmin -u root password NEWPASS
+
+echo "mysql Setting"
+echo "비밀번호는 NEWPASS 입니다."
+echo "다음 커맨드에서 비밀번호 재설정 및 환경설정을 시작합니다."
+
+mysql_secure_installation
+

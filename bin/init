@@ -1,0 +1,85 @@
+#!/bin/bash
+
+#(설명)
+#
+#<ESC>는 ESC키이며 16진수로 "0x1B" 이며  10진수로 "33"  이다.
+#
+#<ESC> 입력하는 방법
+#
+#1. 직접 ESC문자를 입력하는 방법
+#   터미널상에서 특수문자를 입력시에는 Ctrl+v 를 누르고 해당 키를 누르면 된다
+#   Ctrl+v를 누르고 ESC키를 누르면 ^[ 와 같이 화면에 출력되면 ESC 키를 입력할수 있다.
+#   ^[ 는 두 문자가 아니라 ESC키를 나타내는 하나의 문자이다.
+#   Ctrl+v를 누르고 ENTER 키를 누르면 ^M 와 같이 화면에 출력되면 ENTER값을 입력할수 있다.
+#
+#2. 숫자로 표현하여 입력하는 방법
+#   숫자로 표현하는 방법은 자신이 사용하는 SHELL 환경에 따라 다를수 있다.
+#   ksh에서는  ESC키 (10진수로 33)를 입력하고자 할경우 \033 으로 표현할수 있다.
+#
+#{속성값n} 은 글자색, 바탕색 등의 속성값을 나타내는것이다.
+#[0] Reset / Normal   :all attributes off
+#[1] Intensity: Bold  :
+#[2] Intensity: Faint :not widely supported
+#[3] Italic: on       :not widely supported. Sometimes treated as inverse.
+#[4] Underline: Single:
+#[5] Blink: Slow      :less than 150 per minute
+#[6] Blink: Rapid     :MS-DOS ANSI.SYS; 150 per minute or more
+#[7] Image: Negative  :inverse or reverse; swap foreground and background
+#[8] Conceal          :not widely supported
+#[21] Underline: Double:not widely supported
+#[22] Intensity: Normal:not bold and not faint
+#[24] Underline: None  :
+#[25] Blink: off       :
+#[27] Image: Positive  :
+#[28] Reveal           :conceal off
+#[30-39] Set foreground color, normal intensity
+#           30:Black 31:Red 32:Green 33:Yellow 34:Blue 35:Magenta 36:Cyan 37:White 39:reset
+#[40-49] Set background color, normal intensity:
+#           40:Black 41:Red 42:Green 43:Yellow 44:Blue 45:Magenta 46:Cyan 47:White 49:reset
+#[90-99] Set foreground color, high intensity  :aixterm
+#[100-109] set background color, high intensity  : aixterm
+
+clear
+echo -e "\033[00;36m Local Install Manager ( Mac OS )"
+echo -e "\033[00;36m##########################################################################################"
+echo -e "\033[00;37m   ##                  ##                 ########            ####          ##           "
+echo               "   ##                ##  ##             ###                  ##  ##         ##           "
+echo               "   ##              ##      ##          ###                  ##    ##        ##           "
+echo               "   ##             ##        ##        ###                  ##      ##       ##           "
+echo               "   ##             ##        ##        ###                 ############      ##           "
+echo               "   ##             ##        ##        ###                 ##        ##      ##           "
+echo               "   ##              ##      ##          ###               ##          ##     ##           "
+echo               "   ##                ##  ##             ###              ##          ##     ##           "
+echo               "   ##########          ##                 ########       ##          ##     ###########  "
+echo -e "\033[00;36m##########################################################################################"
+echo -e "\033[00;37m"
+
+function showCommand {
+	echo "해당 명령어는 Mac OS Mavericks에 최적화 되어있습니다."
+	echo "# bin/init dependencies "
+	echo "# bin/init setup rails|nginx|spring|redis|apache|tomcat|gitlab"
+}
+
+if [ -z "$1" ];
+then
+	showCommand
+	exit;
+fi
+
+case "$1" in
+	"dependencies|deps" )
+		echo "deps"
+	;;
+	"setup" )
+		echo ./receipe/$2/setup
+		if [ -e ./receipe/$2/setup ];
+		then
+			./receipe/$2/setup
+		else
+			echo "해당하는 설치 스크립트가 없습니다."
+		fi
+	;;
+	* )
+		showCommand
+	;;
+esac
